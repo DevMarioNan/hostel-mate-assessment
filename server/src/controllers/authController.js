@@ -1,5 +1,5 @@
-const {PrismaClient} = require("../generated/prisma");
-const {craeteUser, findUser} = require("../services/authServices");
+
+const {createUser, findUser} = require("../services/authServices");
 
 
 const register = async (req, res) => {
@@ -9,7 +9,7 @@ const register = async (req, res) => {
     }
 
     try {
-        const newUser = await craeteUser(email, password);
+        const newUser = await createUser(email, password);
         if (newUser.error) {
             return res.status(400).json({message: newUser.error});
         }

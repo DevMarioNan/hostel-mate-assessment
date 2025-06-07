@@ -5,7 +5,7 @@ const {z} = require('zod');
 
 const prisma = new PrismaClient();
 
-const craeteUser = async (email, password) => {
+const createUser = async (email, password) => {
     const userSchema = z.object({
         email: z.string().email(),
         password: z.string().min(8)
@@ -74,6 +74,6 @@ const findUser = async (email, password) => {
 }
 
 module.exports = {
-    craeteUser,
+    createUser,
     findUser
 };
