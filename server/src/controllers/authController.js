@@ -1,6 +1,4 @@
-
 const {createUser, findUser} = require("../services/authServices");
-
 
 const register = async (req, res) => {
     const {email, password} = req.body;
