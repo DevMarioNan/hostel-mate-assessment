@@ -66,9 +66,33 @@ const deleteNote = async (req,res) => {
     }
 }
 
+const reorderNotes = async (req, res) => {
+    const updatedOrder = req.body;
+    const userId = req.userId;
+
+    try{
+        await prisma.$transaction(
+            updatedOrder.map((note) => {
+                if (note.userId !== userId) {
+                    throw new Error('You do not have permission to reorder these notes');
+                }
+                return prisma.note.update({
+                    where: {id: note.id},
+                    data: {order: note.order}
+                });
+            })
+        );
+        res.status(200).json({message: 'Notes reordered successfully'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: 'Failed to reorder notes'});
+    }
+}
+
 module.exports = {
     getNotes,
     createNote,
     updateNote,
-    deleteNote
+    deleteNote,
+    reorderNotes
 };

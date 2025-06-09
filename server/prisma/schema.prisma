@@ -26,6 +26,7 @@ model Note {
   id        Int      @id @default(autoincrement())
   title     String
   content   String
+  order     Int
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
