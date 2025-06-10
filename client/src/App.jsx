@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route, Routes, BrowserRouter} from 'react-route
 import RegisterForm from './components/RegisterForm'
 import LoginForm from './components/LoginForm'
 import ProtectedRoute from './components/ProtectedRoute'
+import Homepage from './components/Homepage'
 
 function App() {
 
@@ -14,7 +15,7 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/" element={
           <ProtectedRoute>
-            <h1>Welcome to the protected route!</h1>
+            <Homepage />
           </ProtectedRoute>
         } />
       </Routes>
