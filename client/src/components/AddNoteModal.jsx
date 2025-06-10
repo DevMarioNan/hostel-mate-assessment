@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
-const AddNoteModal = ({ onNoteAdded }) => {
+const AddNoteModal = ({ onNoteAdded, notesLength }) => {
     const [open, setOpen] = useState(false);
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
@@ -35,7 +35,8 @@ const AddNoteModal = ({ onNoteAdded }) => {
                 'http://localhost:5000/api/notes',
                 {
                     title,
-                    content
+                    content,
+                    order: notesLength 
                 },
                 {
                     headers: {
@@ -50,6 +51,12 @@ const AddNoteModal = ({ onNoteAdded }) => {
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+        e.preventDefault(); 
+        }
+    };
+
     return (
         <>
             <Button variant="contained" color="primary" onClick={handleOpen} sx={{ mb: 2, alignSelf: 'flex-start' }}>
@@ -59,7 +66,7 @@ const AddNoteModal = ({ onNoteAdded }) => {
             <Dialog open={open} onClose={handleClose}>
                 <DialogTitle>Add New Note</DialogTitle>
                 <DialogContent>
-                    <Box component="form" noValidate autoComplete="off">
+                    <Box component="form" noValidate autoComplete="off" onKeyDown={handleKeyDown}>
                         <TextField
                             autoFocus
                             margin="dense"

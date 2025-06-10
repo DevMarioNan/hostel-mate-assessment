@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Card,
-  CardContent,
   CardActions,
   Button,
   Typography,
@@ -10,55 +9,61 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  DialogContentText
+  DialogContentText,
+  Box
 } from '@mui/material';
 import axios from 'axios';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const Note = ({ id, title: initialTitle, content: initialContent, fetchNotes }) => {
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-
   const [displayTitle, setDisplayTitle] = useState(initialTitle);
   const [displayContent, setDisplayContent] = useState(initialContent);
 
-  
   const [editTitle, setEditTitle] = useState(initialTitle);
   const [editContent, setEditContent] = useState(initialContent);
 
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   const handleEditOpen = () => {
-    
     setEditTitle(displayTitle);
     setEditContent(displayContent);
     setEditOpen(true);
   };
 
-  const handleEditClose = () => {
-    setEditOpen(false);
-  };
+  const handleEditClose = () => setEditOpen(false);
 
   const handleSave = async () => {
     try {
       await axios.put(
         `http://localhost:5000/api/notes/${id}`,
-        {
-          title: editTitle,
-          content: editContent,
-        },
+        { title: editTitle, content: editContent },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`
           }
         }
       );
-
-      
       setDisplayTitle(editTitle);
       setDisplayContent(editContent);
     } catch (error) {
       console.error('Error saving note:', error);
     }
-
     handleEditClose();
   };
 
@@ -72,36 +77,58 @@ const Note = ({ id, title: initialTitle, content: initialContent, fetchNotes }) 
           Authorization: `Bearer ${localStorage.getItem("token")}`
         }
       });
-
-      fetchNotes(); 
+      fetchNotes();
     } catch (error) {
       console.error('Error deleting note:', error);
     }
-
     handleDeleteClose();
   };
 
   return (
-    <>
+    <Card
+      ref={setNodeRef}
+      style={style}
+      sx={{
+        mb: 2,
+        width: "100%",
+        display: 'flex',
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: "space-between",
+        alignItems: { sm: 'center' },
+        userSelect: 'none'
+      }}
+      variant="outlined"
+    >
       
-      <Card sx={{ mb: 2, width: "100%", display: 'flex', justifyContent: "space-between" }} variant="outlined">
-        <CardContent>
-          <Typography variant="h6" component="div">
-            {displayTitle}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {displayContent}
-          </Typography>
-        </CardContent>
-        <CardActions>
-          <Button size="small" onClick={handleEditOpen} color="primary">
-            Edit
-          </Button>
-          <Button size="small" onClick={handleDeleteOpen} color="error">
-            Delete
-          </Button>
-        </CardActions>
-      </Card>
+      <Box
+        {...attributes}
+        {...listeners}
+        sx={{
+          cursor: 'grab',
+          flex: 1,
+          p: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1
+        }}
+      >
+        <Typography variant="h6" component="div">
+          {displayTitle}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {displayContent}
+        </Typography>
+      </Box>
+
+      
+      <CardActions>
+        <Button size="small" onClick={handleEditOpen} color="primary">
+          Edit
+        </Button>
+        <Button size="small" onClick={handleDeleteOpen} color="error">
+          Delete
+        </Button>
+      </CardActions>
 
 
       <Dialog open={editOpen} onClose={handleEditClose}>
@@ -135,7 +162,7 @@ const Note = ({ id, title: initialTitle, content: initialContent, fetchNotes }) 
         </DialogActions>
       </Dialog>
 
-      {/* Delete Confirmation Modal */}
+
       <Dialog open={deleteOpen} onClose={handleDeleteClose}>
         <DialogTitle>Confirm Deletion</DialogTitle>
         <DialogContent>
@@ -152,7 +179,7 @@ const Note = ({ id, title: initialTitle, content: initialContent, fetchNotes }) 
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Card>
   );
 };
 
