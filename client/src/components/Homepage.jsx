@@ -5,6 +5,7 @@ const Homepage = () => {
     <div>
         <Navbar />
         <div style={{ padding: '20px' }}>
+          
             <NotesList />
         </div>
     </div>
