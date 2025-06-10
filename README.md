@@ -28,7 +28,7 @@
 | **React**      | Frontend JavaScript library        |
 | **Node.js**    | Runtime environment                |
 | **JWT**        | JSON Web Tokens for auth           |
-| **Prisma**   | MongoDB ODM                        |
+| **Prisma**     | Relational Databases ORM           |
 
 ---
 
