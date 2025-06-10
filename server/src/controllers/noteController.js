@@ -1,5 +1,7 @@
 const {FetchNotes, CreateOneNote, UpdateOneNote, DeleteOneNote} = require('../services/noteServices');
+const {PrismaClient} = require('../generated/prisma');
 
+const prisma = new PrismaClient();
 
 const getNotes = async (req, res) => {
     const userId = req.userId;
@@ -67,13 +69,13 @@ const deleteNote = async (req,res) => {
 }
 
 const reorderNotes = async (req, res) => {
-    const updatedOrder = req.body;
+    const data = req.body;
+    const {updatedOrder} = data;
     const userId = req.userId;
-
     try{
         await prisma.$transaction(
             updatedOrder.map((note) => {
-                if (note.userId !== userId) {
+                if (data.userId !== userId) {
                     throw new Error('You do not have permission to reorder these notes');
                 }
                 return prisma.note.update({

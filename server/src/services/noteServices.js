@@ -6,14 +6,15 @@ const prisma = new PrismaClient();
 const noteSchema = z.object({
     title: z.string().min(1),
     content: z.string().min(1),
-    userId: z.number().int().positive()
+    userId: z.number().int().positive(),
+    order: z.number().int().nonnegative().optional()
 });
 
 const FetchNotes = async (userId) => {
     try {
         const notes = await prisma.note.findMany({
             where: {userId: userId},
-            orderBy: {createdAt: 'desc'}
+            orderBy: {order: 'asc'}
         });
         return notes;
     } catch (error) {
@@ -22,14 +23,15 @@ const FetchNotes = async (userId) => {
     }
 }
 
-const CreateOneNote = async (title, content, userId) => {
+const CreateOneNote = async (title, content, userId,order) => {
     try {
-        const validatedData = noteSchema.parse({title, content, userId});
+        const validatedData = noteSchema.parse({title, content, userId, order});
         const newNote = await prisma.note.create({
             data: {
                 title: validatedData.title,
                 content: validatedData.content,
-                userId: validatedData.userId
+                userId: validatedData.userId,
+                order: validatedData.order || 0 
             }
         });
         return newNote;
